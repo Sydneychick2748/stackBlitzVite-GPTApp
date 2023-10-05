@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messenger / Chat - Build a dummy chat window that allows the user to submit messages.</title>
+</head>
+
+<body>
+  <!-- need to have a input box to type in the input
+       have a send button 
+        div for response when the button is clicked sent back
+        i will need a settime out to respond for the message 
+       
+
+      -->
+  <div id="messageContainer">
+    <div> Chat With Us</div>
+    <input type="text" id="messageInput" placeholder="Type your message..." />
+    <button id="ChatButton">Chat With Us</button>
+  </div>
+  <div id="chatSent"> </div>
+  <div class="mainRespnseDiv">
+    <!-- <div id="chatResponse"> </div> -->
+    <div>
+    </div>
+    <script>
+      let input = document.getElementById("messageInput");
+      let chatButton = document.getElementById("ChatButton");
+      let chatSent = document.getElementById("chatSent");
+      let chatInput = ''
+      
+const API_KEY = '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'
+
+ async function getResponse(){
+  console.log('clickedin getresponse')
+  chatInput = input.value;
+  // const userMessage = chatSent.lastChild.textContent
+  console.log(chatSent, "chatSent")
+  
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`,
+    },
+    
+    body: JSON.stringify({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content:   chatInput,
+        }
+        
+      ],
+    })
+  }
+   try{
+     const response = await fetch('https://api.openai.com/v1/chat/completions', options)
+     const data = await response.json()
+     console.log(data)
+    //  chatResponse.textContent = data.choices[0].message.content;
+
+   
+    //  this will create the p element for the questions 
+    
+    //  this will create the new p tag for the answers 
+    const aiMessageEl = document.createElement('p');
+    aiMessageEl.textContent = data.choices[0].message.content;
+    chatSent.appendChild(aiMessageEl);
+    
+   // Clear the input field after the API call and response
+   input.value = ""; // Set the value to an empty string to
+
+   }catch (error){
+console.log(error,"error")
+   }
+ }
+
+  
+
+function chatMessageInput(){
+
+  chatButton.addEventListener("click", function(){
+    chatInput = input.value;
+    
+     
+    chatSent.innerHTML += chatInput + "<br/>";
+
+    getResponse()
+    console.log(chatInput, "chatinput")
+    console.log("clicked")
+  })
+  
+}
+chatMessageInput()
+    </script>
+</body>
+
+</html>
